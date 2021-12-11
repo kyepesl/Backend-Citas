@@ -14,6 +14,8 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -34,13 +36,13 @@ public class MascotaController {
     @Autowired
     private IMascotaService mascotaService;
 
-    //@Secured({"ROLE_ADMIN","ROLE_USER"})
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @GetMapping("/mascota")
     public List<Mascota> index() {
-        return mascotaService.ObtenerMascotas();
+        return mascotaService.ObtenerMascotas(SecurityContextHolder.getContext().getAuthentication().getName());
     }
 
-    //@Secured({"ROLE_ADMIN","ROLE_USER"})
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @PostMapping("/mascota")
     public ResponseEntity<?> create(@Valid @RequestBody Mascota mascota, BindingResult result) {
 
@@ -59,7 +61,7 @@ public class MascotaController {
         }
 
         try {
-            mascotaNew = this.mascotaService.CrearMascota(mascota);
+            mascotaNew = this.mascotaService.CrearMascota(mascota, SecurityContextHolder.getContext().getAuthentication().getName());
         } catch (DataAccessException e) {
             response.put("mensaje", "Error al realizar el insert en la base de datos");
             response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
@@ -71,7 +73,7 @@ public class MascotaController {
         return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
     }
 
-    //@Secured({"ROLE_ADMIN","ROLE_USER"})
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @PutMapping("/mascota")
     public ResponseEntity<?> update(@Valid @RequestBody Mascota mascota, BindingResult result) {
 
@@ -108,7 +110,7 @@ public class MascotaController {
 
     }
 
-    //@Secured({"ROLE_ADMIN"})
+    @Secured({"ROLE_ADMIN"})
     @DeleteMapping("/mascota/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<?> delete(@PathVariable Long id) {

@@ -25,7 +25,6 @@ public class UsuarioController {
     public ResponseEntity<Map<String, Object>> create(@RequestBody Usuario usuario) {
 
         Usuario usuarioNew = null;
-
         Map<String, Object> response = new HashMap<>();
 
         try {

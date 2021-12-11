@@ -13,7 +13,6 @@ import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @CrossOrigin(origins = {"*"})
@@ -27,7 +26,7 @@ public class CitaController {
     @GetMapping("/cita")
     public List<Cita> index() {
 
-        List<Cita>  citas =  citaService.ObtenerCitas();
+        List<Cita> citas =  citaService.ObtenerCitas();
         return citas;
     }
 

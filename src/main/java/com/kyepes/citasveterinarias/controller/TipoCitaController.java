@@ -1,7 +1,7 @@
 package com.kyepes.citasveterinarias.controller;
 
-import com.kyepes.citasveterinarias.core.entity.EstadoCita;
-import com.kyepes.citasveterinarias.core.service.IEstadoCitaService;
+import com.kyepes.citasveterinarias.core.entity.TipoCita;
+import com.kyepes.citasveterinarias.core.service.ITipoCitaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -14,14 +14,14 @@ import java.util.List;
 @CrossOrigin(origins = {"*"})
 @RestController
 @RequestMapping("/api")
-public class EstadoCitaController {
+public class TipoCitaController {
 
     @Autowired
-    private IEstadoCitaService estadoCitaService;
+    private ITipoCitaService tipoCitaService;
 
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
-    @GetMapping("/estados-citas")
-    public List<EstadoCita> index() {
-        return estadoCitaService.ObtenerEstadosCitas();
+    @GetMapping("/tipos-citas")
+    public List<TipoCita> index() {
+        return tipoCitaService.ObtenerTiposCitas();
     }
 }

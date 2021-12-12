@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -39,7 +40,10 @@ public class MascotaController {
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @GetMapping("/mascota")
     public List<Mascota> index() {
-        return mascotaService.ObtenerMascotas(SecurityContextHolder.getContext().getAuthentication().getName());
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        List<String> roles = auth.getAuthorities().stream().map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList());
+        return mascotaService.ObtenerMascotas(auth.getName(), roles);
     }
 
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
@@ -119,14 +123,18 @@ public class MascotaController {
         try {
 
             this.mascotaService.EliminarMascota(id);
+            response.put("mensaje", "Mascota eliminada con éxito");
 
         } catch (DataAccessException e) {
             response.put("mensaje", "Error al eliminar la mascota en la base de datos");
             response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+        catch (Exception ex){
+            response.put("mensaje", "Error al eliminar la mascota en la base de datos");
+            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 
-        response.put("mensaje", "Mascota eliminada con éxito");
         return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
     }
 }

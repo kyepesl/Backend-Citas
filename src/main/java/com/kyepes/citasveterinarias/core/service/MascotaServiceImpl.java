@@ -2,6 +2,7 @@ package com.kyepes.citasveterinarias.core.service;
 
 import com.kyepes.citasveterinarias.core.dao.IMascotaDao;
 import com.kyepes.citasveterinarias.core.dao.IUsuarioDao;
+import com.kyepes.citasveterinarias.core.entity.Cita;
 import com.kyepes.citasveterinarias.core.entity.Mascota;
 import com.kyepes.citasveterinarias.core.entity.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,8 +42,13 @@ public class MascotaServiceImpl implements IMascotaService {
     }
 
     @Override
-    public List<Mascota> ObtenerMascotas(String usuario) {
+    public List<Mascota> ObtenerMascotas(String usuario,List<String> roles) {
         Iterable<Mascota> mascotas = mascotaDao.findAll();
+
+        if(roles.contains("ROLE_ADMIN")){
+            return (List<Mascota>) mascotas;
+        }
+
         List<Mascota> mascotasUsuario = new ArrayList<>();
         for (Mascota mascota : mascotas) {
             if (mascota.getUsuario().getCorreo().equals(usuario)) {
@@ -54,15 +60,12 @@ public class MascotaServiceImpl implements IMascotaService {
 
     @Override
     public Boolean EliminarMascota(Long id) {
-        try {
+
             Optional<Mascota> mascota = mascotaDao.findById(id);
             if (mascota.isPresent()) {
                 mascotaDao.delete(mascota.get());
                 return true;
             }
             return false;
-        } catch (Exception e) {
-            return false;
-        }
     }
 }

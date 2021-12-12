@@ -6,6 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,13 +27,19 @@ public class CitaController {
     @Autowired
     private ICitaService citaService;
 
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @GetMapping("/cita")
     public List<Cita> index() {
 
-        List<Cita> citas =  citaService.ObtenerCitas();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        List<String> roles = auth.getAuthorities().stream().map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList());
+
+        List<Cita> citas =  citaService.ObtenerCitas(auth.getName(),roles);
         return citas;
     }
 
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @PostMapping("/cita")
     public ResponseEntity<?> create(@Valid @RequestBody Cita cita, BindingResult result) {
 
@@ -60,6 +70,7 @@ public class CitaController {
         return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
     }
 
+    @Secured({"ROLE_ADMIN"})
     @PutMapping("/cita")
     public ResponseEntity<?> update(@Valid @RequestBody Cita cita, BindingResult result) {
 

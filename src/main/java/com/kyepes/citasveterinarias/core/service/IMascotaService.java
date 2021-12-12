@@ -8,6 +8,6 @@ public interface IMascotaService {
 
     Mascota CrearMascota(Mascota mascota, String email);
     Boolean EditarMascota(Mascota mascota);
-    List<Mascota> ObtenerMascotas(String usuario);
+    List<Mascota> ObtenerMascotas(String usuario,List<String> roles);
     Boolean EliminarMascota(Long id);
 }

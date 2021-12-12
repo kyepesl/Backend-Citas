@@ -8,5 +8,5 @@ public interface ICitaService {
 
     Cita CrearCita(Cita cita);
     Boolean CambiarEstadoCita(Cita cita);
-    List<Cita> ObtenerCitas();
+    List<Cita> ObtenerCitas(String usuario, List<String> roles);
 }
